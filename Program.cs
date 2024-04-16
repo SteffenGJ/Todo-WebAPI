@@ -1,7 +1,16 @@
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Rewrite;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
+
+app.UseRewriter(new RewriteOptions().AddRedirect("tasks/(.*)", "todos/$1"));
+
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"[{context.Request.Method}] {context.Request.Path}");
+    await next(context);
+});
 
 var todos = new List<Todo>();
 
